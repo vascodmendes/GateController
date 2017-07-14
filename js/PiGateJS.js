@@ -11,7 +11,7 @@ isEnableAutoRefresh = false
 
 gateToggleIntervalId = 0;
 
-localServicesIP = "http://192.168.1.72/pigate"
+localServicesIP = "http://192.168.1.73/pihome"
 publicServicesIP = "http://vascodmendespi3.ddns.net:8085/pigate"
 ipURL = localServicesIP; //Por Default, o IP é o público
 
