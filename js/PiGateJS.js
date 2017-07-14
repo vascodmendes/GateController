@@ -13,7 +13,7 @@ gateToggleIntervalId = 0;
 
 localServicesIP = "http://192.168.1.72/pigate"
 publicServicesIP = "http://vascodmendespi3.ddns.net:8085/pigate"
-ipURL = publicServicesIP; //Por Default, o IP é o público
+ipURL = localServicesIP; //Por Default, o IP é o público
 
 
 serviceUser = "vascodmendes";
@@ -643,7 +643,6 @@ function setModalImage(isRefreshImage){
 }
 
 function closeModalImage(){
-	console.log("Janela imagem fechada");
 	var modal = document.getElementById('myModal');
 	clearInterval(modalImageLoopIntervalId);
 	modalImageLoopIntervalId = 0;
