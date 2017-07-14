@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="description" content="Aplicação para controlo local do portão.">
+		<meta name="viewport" content="width=device-width">
+
+		<meta property="og:title" content="Controlo de portão">
+		<meta property="og:description" content="Aplicação para controlo local do portão.">
+		<meta property="og:url" content="http://simpleweatherjs.com/">
+		<meta property="og:image" content="./img/blueBack.jpg">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<!-- Awesome fonts <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+		<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+		<link rel="stylesheet" href="./CSS/font-awesome.min.css">
+		
+		<!-- BootStrap <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+		<link rel="stylesheet" href="./CSS/bootstrap.min.css">
+		<link rel="stylesheet" href="./CSS/ModalImage.css">
+		
+		<!-- jQuery library <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+		<script src="./js/jquery.min.js"></script>
+		
+		 <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+		 <script src="./js/bootstrap.min.js"></script> 
+		
+		<!-- Script Pi Gate	-->
+		<script src="./js/PiGateJSFunctions.js"></script>
+		<script src="./js/PiGateJS.js"></script>
+		<!-- CSS Pi Gate	-->	
+		<link rel="stylesheet" type="text/css" href="./CSS/PiGateCSS.css">
+		
+		<!-- CSS genérico W3 <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"> -->
+		<link rel="stylesheet" href="./CSS/w3.css">
+		
+		<title>PiGate - Controlo de portão</title>
+		
+	</head>
+	
+	<div id="messageContainerId" style="display:none"></div>
+	
+	<div id="successMessageId" class="alert success alert-dismissable" style="display:none">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<strong>Success!</strong> This alert box could indicate a successful or positive action.
+	</div>
+	<div id="errorMessageId" class="alert alert-dismissable" style="display:none">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<strong>Error!</strong>.
+	</div>
+	<div id="warningMessageId" class="alert warning alert-dismissable" style="display:none">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		<strong>Error!</strong>.
+	</div>
+		
+	<body background="./img/BlueBackground3.jpg">
+	
+	<!--<div class="col-md-12 col-sm-12 navbar-fixed-top" style="background-color:rgba(47,102,185,1)" align="right">
+		<i class="fa fa-globe fa-3x"></i>
+	</div>-->
+	
+	<div class="col-md-12 col-sm-12 col-xs-12" style="top: 0;margin-top:-20px;cursor:pointer;" align="right">
+		<i id="iconWebNetwork" class="fa fa-globe fa-3x" onclick="getNetworkLocation()" style="display:none"></i>
+		<i id="iconHomeNetwork" class="fa fa-home fa-3x" onclick="getNetworkLocation()" style="display:none"></i>
+	</div>
+
+	
+		<h1 style="color: #FFFFFF;text-shadow:0px 1px 2px rgba(0,0,0,0.5);font-family: verdana,arial,tahoma,helvetica,sans-serif;" align="center">Controlo de portão</h1>
+		
+		<div class="col-md-6 col-sm-6 hero-feature">
+			<div class="thumbnail" style="background-color: rgba(255,255,255,0.3);min-height:231px;">
+				<div id="Gate">
+					<div style="margin-left:2%;margin-right:2%">
+						<h3 id="GateStatus" class="whiteText alignCenter"></h3>
+					
+						<div style="">
+							<button id="refreshButtonId" onclick="refresh()" type="button" class="btn btn-lg btn-default" style="display:none;margin-left:10px;width:100px">
+								<a class="fa fa-refresh" style="color:#2B9ED8;"></a>
+							</button>
+							<button id="openGate100ButtonId" onclick="openGate()" type="button" class="btn btn-lg btn-default greenColor" style="display:none;width:100px">Abrir</button>
+							<button id="closeGateButtonId" onclick="closeGate()" type="button" class="btn btn-lg btn-default redColor" style="display:none;margin-left:10px;width:100px">Fechar</button>
+							<button id="forceCloseGateButtonId" onclick="forceCloseGate()" type="button" class="btn btn-lg btn-default redColor" style="display:none;margin-left:10px;width:150px">Forçar fecho</button>
+							<button id="toggleButtonId" onclick="toggleGateSimple()" type="button" class="btn btn-lg btn-default" style="display:none;margin-left:10px;width:100px">
+								<a class="fa fa-bolt fa-lg" style="color:#ECBA16;"></a>
+							</button>
+							<button id="togglePedestrianId" onclick="openPedestrianGate()" type="button" class="btn btn-lg btn-default" style="display:none;margin-left:10px;width:100px">
+								<a class="fa fa-user" style="color:#2B9ED8;"></a>
+							</button>
+							
+						</div>
+						
+						<div id="ProgressBarDisplayId" style="display:none">
+							<table style="width:100%">
+								<tr>
+									<td align="left">Aberto</th>
+									<td align="right">Fechado</th>
+								</tr>
+							</table>
+							<div id="progressBarId" class="progress">
+								<div id="progresssBarStrip" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>					
+							</div>
+						</div>
+						<div id="LoaderId" style="margin:auto; margin-top:10px; display:none" class="loader"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Câmera do portão -->
+		<div class="col-md-6 col-sm-6 hero-feature">
+			<div class="thumbnail" style="background-color: rgba(255,255,255,0.3);min-height:231px;">
+				<img src="" id="CameraImageSRC" alt="" onclick="setModalImage(false)"></img>
+				<p></p>
+			</div>
+		</div>
+		
+		<!-- Temperatura -->
+		<div class="col-md-6 col-sm-6 hero-feature">
+			<div class="thumbnail" style="background-color: rgba(255,255,255,0.3);;min-height:90px;">
+				<div class="col-xs-2 col-md-3 col-sm-3"></div>
+				<div class="col-xs-4 col-md-3 col-sm-3">
+					<i class="fa fa-thermometer-half fa-5x"></i>
+                </div>
+					<div class="col-xs-4 col-md-3 col-sm-3" align="center">
+                            <div class="" style="font-weight:bold">Temperatura</div>
+                            <div id="TemperatureContainer" style="margin-top:10px"></div>
+                        </div>
+				<div class="col-xs-2 col-md-3 col-sm-3"></div>
+				
+				<p></p>
+			</div>
+		</div>
+		
+
+		<!-- Status do sistema -->
+		<div class="col-md-6 col-sm-6 hero-feature" align="center">
+			<div class="thumbnail" style="background-color: rgba(255,255,255,0.3);;min-height:90px;cursor:pointer;" onclick="getSystemStatus(true)">
+				<div class="" style="font-weight:bold">Sistema</div>
+                 <i id="SystemOKIcon" class="fa fa-check-circle fa-3x" style="display:none; color:green"></i>
+				 <i id="SystemNOKIcon" class="fa fa-exclamation-circle fa-3x" style="display:none; color:#e74c3c">
+					<span id="systemsDownNumber" class="badge" style="margin-bottom: 25px;margin-left: -10px;"></span>
+				 </i>				
+				<p></p>
+			</div>
+		</div>
+		
+		<div id="myModal" class="modal">
+			<!-- The Close Button -->
+			<span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+			<!-- Modal Content (The Image) -->
+			<img src="" id="modalImage" alt="" class="modal-content"></img>
+			<!-- Modal Caption (Image Text) -->
+			<div id="caption"></div>
+		</div>
+	</body>
+</html>
+
